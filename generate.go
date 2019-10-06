@@ -1,9 +1,13 @@
 package main
 
 //Generate a dashboard based off an ingested prometheus metrics
-func Generate(metrics MetricMap) *Dashboard {
+func Generate(metrics MetricMap, gauges bool) *Dashboard {
 	dashboard := NewDashboard(*title)
 	count, lastx, lasty := 0, 0, 0
+	ptype := "graph"
+	if gauges {
+		ptype = "gauge"
+	}
 
 	for _, v := range metrics.List() {
 		labels := ""
@@ -53,7 +57,7 @@ func Generate(metrics MetricMap) *Dashboard {
 			if (count % 2) < 1 {
 				lastx = 0
 				dashboard.AddPanel(*NewPanel(metrics.Get(v).Help(),
-					"graph",
+					ptype,
 					metrics.Get(v).Help(),
 					metrics.Get(v).Name()+metrics.Get(v).Suffix(),
 					metrics.Get(v).Unit(),
@@ -67,7 +71,7 @@ func Generate(metrics MetricMap) *Dashboard {
 			} else {
 				lastx = lastx + 12
 				dashboard.AddPanel(*NewPanel(metrics.Get(v).Help(),
-					"graph", metrics.Get(v).Help(),
+					ptype, metrics.Get(v).Help(),
 					metrics.Get(v).Name()+metrics.Get(v).Suffix(),
 					metrics.Get(v).Unit(),
 					lastx,
