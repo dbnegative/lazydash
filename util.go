@@ -30,9 +30,12 @@ func LoadFromStdin() []byte {
 	if err != nil {
 		panic(err)
 	}
-
-	if info.Mode()&os.ModeCharDevice != 0 || info.Size() <= 0 {
-		return nil
+	//is a pipe?
+	if info.Mode()&os.ModeNamedPipe == 0 {
+		//is a redirect?
+		if info.Mode()&os.ModeCharDevice != 0 || info.Size() <= 0 {
+			return nil
+		}
 	}
 
 	reader := bufio.NewReader(os.Stdin)
