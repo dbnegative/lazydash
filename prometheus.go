@@ -35,7 +35,7 @@ func ParseMetrics(metrics []byte) MetricMap {
 
 	p := PromParse.NewPromParser(metrics)
 	mm := MetricMap{}
-	mm.Init()
+	mm.New()
 
 	for {
 		et, err := p.Next()

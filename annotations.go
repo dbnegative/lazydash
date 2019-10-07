@@ -37,6 +37,7 @@ type Annotations struct {
 	List []Annotation `json:"list,omitempty"`
 }
 
+//NewAnnotation returns a new initialised annotation
 func NewAnnotation(name string, datasource string, enable bool, hide bool, atype string) *Annotation {
 	return &Annotation{
 		Datasource: datasource,

@@ -27,6 +27,7 @@ import (
 	"sort"
 )
 
+//Metric contains all attributs of a single parsed metric
 type Metric struct {
 	help   string
 	mtype  string
@@ -36,10 +37,12 @@ type Metric struct {
 	unit   string
 }
 
+//MetricMap contains all parsed metrics indexed by name
 type MetricMap struct {
 	metrics map[string]*Metric
 }
 
+//NewMetric returns an new initialised metric type
 func NewMetric(name string, help string, labels map[string]bool, mtype string, suffix string, unit string) *Metric {
 	m := &Metric{}
 	m.SetName(name)
@@ -55,54 +58,67 @@ func NewMetric(name string, help string, labels map[string]bool, mtype string, s
 	return m
 }
 
+//SetHelp sets the Help field
 func (m *Metric) SetHelp(help string) {
 	m.help = help
 }
 
+//Help retunrs help field
 func (m *Metric) Help() string {
 	return m.help
 }
 
+//SetType set Type field
 func (m *Metric) SetType(mtype string) {
 	m.mtype = mtype
 }
 
+//Type returns type field
 func (m *Metric) Type() string {
 	return m.mtype
 }
 
+//SetName sets the name field
 func (m *Metric) SetName(name string) {
 	m.name = name
 }
 
+//Name returns the name field
 func (m *Metric) Name() string {
 	return m.name
 }
 
+//SetUnit sets the unit field
 func (m *Metric) SetUnit(unit string) {
 	m.unit = unit
 }
 
+//Unit returns the unit
 func (m *Metric) Unit() string {
 	return m.unit
 }
 
+//Suffix returns the suffix field
 func (m *Metric) Suffix() string {
 	return m.suffix
 }
 
+//SetSuffix sets the suffix field
 func (m *Metric) SetSuffix(suffix string) {
 	m.suffix = suffix
 }
 
+//SetLabels sets the lables field
 func (m *Metric) SetLabels(labels map[string]bool) {
 	m.labels = labels
 }
 
+//AddLabel adds a new label
 func (m *Metric) AddLabel(label string) {
 	m.labels[label] = true
 }
 
+//Labels returns the labels field
 func (m *Metric) Labels() []string {
 	labels := []string{}
 	if len(m.labels) > 0 {
@@ -132,6 +148,7 @@ func (m *MetricMap) Get(name string) *Metric {
 	return m.metrics[name]
 }
 
+//List returns a list of metrics that have been mapped
 func (m *MetricMap) List() []string {
 	list := []string{}
 	for k := range m.metrics {
@@ -141,6 +158,8 @@ func (m *MetricMap) List() []string {
 
 	return list
 }
-func (m *MetricMap) Init() {
+
+//New returns a new instance of MetricMap
+func (m *MetricMap) New() {
 	m.metrics = make(map[string]*Metric)
 }

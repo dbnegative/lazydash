@@ -29,7 +29,7 @@ import (
 	"testing"
 )
 
-func Loadtestdata() dashboard {
+func Loadtestdata() Dashboard {
 
 	testdata := "testdash.json"
 
@@ -46,14 +46,14 @@ func Loadtestdata() dashboard {
 		fmt.Println(err)
 	}
 
-	var dash = dashboard{}
+	var dash = Dashboard{}
 	json.Unmarshal(b, &dash)
 
 	return dash
 }
 func TestParsePanel(t *testing.T) {
 	dash := Loadtestdata()
-	p := panel{
+	p := Panel{
 		ID:           2,
 		Title:        "Counter",
 		Type:         "graph",
@@ -64,7 +64,7 @@ func TestParsePanel(t *testing.T) {
 		Fill:         1,
 		FillGradient: 0,
 
-		Legend: panelLegend{
+		Legend: PanelLegend{
 			AlignAsTable: true,
 			Avg:          false,
 			Current:      false,
@@ -89,14 +89,14 @@ func TestParsePanel(t *testing.T) {
 		SpaceLength:   10,
 		Stack:         false,
 		SteppedLine:   false,
-		XAxis: panelXAxis{
+		XAxis: PanelXAxis{
 			//Buckets: nil,
 			Mode: "time",
 			Name: "",
 			Show: true,
 			//Values: nil ,
 		},
-		YAxes: []panelYAxes{
+		YAxes: []PanelYAxes{
 			{
 				Decimals: 6,
 				Format:   "short",
@@ -117,19 +117,19 @@ func TestParsePanel(t *testing.T) {
 			},
 		},
 
-		YAxis: panelYAxis{
+		YAxis: PanelYAxis{
 			Align:      true,
 			AlignLevel: 1,
 		},
 
-		GridPos: panelGridPos{
+		GridPos: PanelGridPos{
 			X: 0,
 			Y: 1,
 			H: 9,
 			W: 12,
 		}, //GridPos
 
-		Targets: []panelTarget{
+		Targets: []PanelTarget{
 			{
 				Expr:  "sum(rate(process_cpu_seconds_total [1m]))",
 				RefID: "A",

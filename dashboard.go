@@ -34,26 +34,26 @@ var RefreshIntervals = []string{"5s", "10s", "30s", "1m", "5m", "15m", "30m", "1
 //TimeOptions for quick referenece
 var TimeOptions = []string{"5m", "15m", "1h", "3h", "6h", "12h", "24h", "2d", "3d", "4d", "7d", "30d"}
 
-//TimeRange contains a range of time
-type timeRange struct {
+//TimeRange contains a range of Time
+type TimeRange struct {
 	From string `json:"from"` //: "now-6h",
 	To   string `json:"to"`   //: "now"
 }
 
 //Dashboard holds all other Grafana sub containers
-type dashboard struct {
+type Dashboard struct {
 	ID            int         `json:"id,omitempty"`
 	UID           string      `json:"uid,ommitempty"`
-	Title         string      `json:"title,omitempty"` // "New dashboard",
+	Title         string      `json:"title,omitempty"` // "New Dashboard",
 	Tags          []string    `json:"tags,omitempty"`
-	TimeZone      string      `json:"timezone,omitempty"`
+	TimeZone      string      `json:"Timezone,omitempty"`
 	Editable      bool        `json:"editable,omitempty"`
 	HideControls  string      `json:"hideControls,omitempty"`
 	GraphToolTip  int         `json:"graphTooltip,omitempty"`
-	Panels        []panel     `json:"panels,omitempty"`
-	Time          timeRange   `json:"time,omitempty"`
-	TimePicker    timePicker  `json:"timepicker,omitempty"`
-	Templating    templating  `json:"templating,omitempty"`
+	Panels        []Panel     `json:"Panels,omitempty"`
+	Time          TimeRange   `json:"Time,omitempty"`
+	TimePicker    TimePicker  `json:"Timepicker,omitempty"`
+	Templating    Templating  `json:"templating,omitempty"`
 	Annotations   Annotations `json:"annotations,omitempty"`
 	Refresh       string      `json:"refresh,omitempty"`
 	SchemaVersion int         `json:"schemaVersion,omitempty"`
@@ -62,62 +62,63 @@ type dashboard struct {
 	Style         string      `json:"style,omitempty"`
 }
 
-//TimePicker comtains all attribuyes used to set dashboard time options
-type timePicker struct {
+//TimePicker comtains all attribuyes used to set Dashboard Time options
+type TimePicker struct {
 	Collapse         bool     `json:"collapse,omitempty"`
 	Enable           bool     `json:"enable,omitempty"`
 	Notice           bool     `json:"notice,omitempty"`
 	Now              bool     `json:"now,omitempty"`
 	RefreshIntervals []string `json:"refresh_intervals,omitempty"`
 	Status           string   `json:"status,omitempty"`
-	TimeOptions      []string `json:"time_options"`
+	TimeOptions      []string `json:"Time_options"`
 	Type             string   `json:"type,omitempty"`
 	NowDelay         string   `json:"nowDelay,omitempty"`
 }
 
-//NewDashboard initialises a new dashboard
-func NewDashboard(title string) *dashboard {
+//NewDashboard initialises a new Dashboard
+func NewDashboard(title string) *Dashboard {
 
-	return &dashboard{
+	return &Dashboard{
 		Title:    title,
 		TimeZone: "",
 		ID:       1,
 		Links:    []string{""},
 		Version:  1,
-		Time: timeRange{
+		Time: TimeRange{
 			From: "now-5m",
 			To:   "now",
 		},
-		TimePicker: timePicker{
+		TimePicker: TimePicker{
 			RefreshIntervals: RefreshIntervals,
 		},
 		//SchemaVersion: 20,
 		//Style:         "dark",
 		Tags: []string{""},
-		Templating: templating{
-			List: []templatingVar{},
+		Templating: Templating{
+			List: []TemplatingVar{},
 		},
-		Panels: []panel{},
+		Panels: []Panel{},
 	}
 }
 
-//AddPanel adds a panel to the dashboard
-func (d *dashboard) AddPanel(p panel) {
+//AddPanel adds a Panel to the Dashboard
+func (d *Dashboard) AddPanel(p Panel) {
 	d.Panels = append(d.Panels, p)
 }
 
 //AddVariable adds a new templating variable
-func (d *dashboard) AddVariable(t templatingVar) {
+func (d *Dashboard) AddVariable(t TemplatingVar) {
 	d.Templating.List = append(d.Templating.List, t)
 
 }
 
-//AddAnnotation adds a new annotation to the dashboard
-func (d *dashboard) AddAnnotation() {
+//AddAnnotation adds a new annotation to the Dashboard
+func (d *Dashboard) AddAnnotation() {
 
 }
 
-func (d *dashboard) DumpJSON(pretty bool) {
+//DumpJSON dumps the dashboard as JSON
+func (d *Dashboard) DumpJSON(pretty bool) {
 
 	var b []byte
 	var err error
@@ -125,12 +126,12 @@ func (d *dashboard) DumpJSON(pretty bool) {
 	if pretty {
 		b, err = json.MarshalIndent(*d, "", "  ")
 		if err != nil {
-			log.Fatalf("could not unmarshal dashboard json: %v", err)
+			log.Fatalf("could not unmarshal Dashboard json: %v", err)
 		}
 	} else {
 		b, err = json.Marshal(*d)
 		if err != nil {
-			log.Fatalf("could not unmarshal (noident) dashboard json: %v", err)
+			log.Fatalf("could not unmarshal (noident) Dashboard json: %v", err)
 		}
 	}
 

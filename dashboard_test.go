@@ -26,25 +26,25 @@ import "testing"
 func TestParseDashboard(t *testing.T) {
 	dash := Loadtestdata()
 
-	d := &dashboard{
+	d := &Dashboard{
 		Title:    "demo",
 		TimeZone: "",
 		ID:       1,
 		Links:    []string{""},
 		UID:      "QIbx6hhZz",
 		Version:  4,
-		Time: timeRange{
+		Time: TimeRange{
 			From: "now-5m",
 			To:   "now",
 		},
-		TimePicker: timePicker{
+		TimePicker: TimePicker{
 			RefreshIntervals: RefreshIntervals,
 		},
 		SchemaVersion: 20,
 		Style:         "dark",
 		Tags:          []string{""},
-		Templating: templating{
-			List: []templatingVar{},
+		Templating: Templating{
+			List: []TemplatingVar{},
 		},
 	}
 

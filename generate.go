@@ -27,24 +27,21 @@ import (
 )
 
 var (
-	counterTmpl = &metricsTemplate{
+	counterTmpl = &MetricsTemplate{
 		template:  "sum(rate(:METRIC: [1m]))",
 		delimiter: ":METRIC:",
 	}
-	gaugeTmpl = &metricsTemplate{
+	gaugeTmpl = &MetricsTemplate{
 		template:  ":METRIC:",
 		delimiter: ":METRIC:",
 	}
 )
 
-//Generate a dashboard based off an ingested prometheus metrics
-func Generate(metrics MetricMap, gauges bool) *dashboard {
-	dashboard := NewDashboard(*title)
+//Generate a Dashboard based off an ingested prometheus metrics
+func Generate(metrics MetricMap, gauges bool) *Dashboard {
+
+	Dashboard := NewDashboard(*title)
 	count, lastx, lasty := 0, 0, 0
-	//ptype := "graph"
-	//if gauges {
-	//	ptype = "gauge"
-	//}
 
 	for _, v := range metrics.List() {
 
@@ -62,15 +59,15 @@ func Generate(metrics MetricMap, gauges bool) *dashboard {
 			p.SetMetricExpr(counterTmpl.MetricTemplate())
 			p.SetType("graph")
 
-			//add 2 panels to a row
+			//add 2 Panels to a row
 			if (count % 2) < 1 {
-				dashboard.AddPanel(*p)
+				Dashboard.AddPanel(*p)
 				lastx = 0
 				lasty = lasty + 9
 				count++
 			} else {
 				lastx = lastx + 12
-				dashboard.AddPanel(*p)
+				Dashboard.AddPanel(*p)
 				count++
 			}
 
@@ -82,20 +79,20 @@ func Generate(metrics MetricMap, gauges bool) *dashboard {
 				p.SetType("gauges")
 			}
 
-			//add 2 panels to a row
+			//add 2 Panels to a row
 			if (count % 2) < 1 {
 				lastx = 0
-				dashboard.AddPanel(*p)
+				Dashboard.AddPanel(*p)
 				lasty = lasty + 9
 				count++
 			} else {
 				lastx = lastx + 12
-				dashboard.AddPanel(*p)
+				Dashboard.AddPanel(*p)
 				count++
 			}
 
 		}
 	}
-	//fmt.Printf("%+v\n", dashboard)
-	return dashboard
+	//fmt.Printf("%+v\n", Dashboard)
+	return Dashboard
 }

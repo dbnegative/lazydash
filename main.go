@@ -56,10 +56,12 @@ func main() {
 		b = LoadFromStdin()
 	}
 
+	//have we received input?
 	if len(b) > 0 {
 		metrics = ParseMetrics(b)
 	}
 
+	//do we have any parsed metrics?
 	if len(metrics.List()) > 0 {
 		dashboard := Generate(metrics, *gauges)
 		dashboard.DumpJSON(*pretty)

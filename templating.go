@@ -23,28 +23,28 @@
 package main
 
 //TemplatingVarState contains the current state of the dashboard variable
-type templatingVarState struct {
+type TemplatingVarState struct {
 	Tags  []string `json:"tags,omitempty"`
 	Text  string   `json:"text,omitempty"`
 	Value string   `json:"value,omitempty"`
 }
 
 //TemplatingOption contains all Templating option attributes
-type templatingOption struct {
+type TemplatingOption struct {
 	Selected bool   `json:"selected,omitempty"`
 	Text     string `json:"text,omitempty"`
 	Value    string `json:"value,omitempty"`
 }
 
 //TemplatingVar defines a single Dashboard variable
-type templatingVar struct {
+type TemplatingVar struct {
 	AllFormat      string             `json:"allFormat,omitempty"` //: "wildcard",
-	Current        templatingVarState `json:"current,omitempty"`
+	Current        TemplatingVarState `json:"current,omitempty"`
 	Datasource     string             `json:"datasource,omitempty"`
 	Definition     string             `json:"definition,omitempty"`
 	IncludeAll     bool               `json:"includeAll,omitempty"`
 	Name           string             `json:"name,omitempty"`
-	Options        []templatingOption `json:"options,omitempty"`
+	Options        []TemplatingOption `json:"options,omitempty"`
 	Query          string             `json:"query,omitempty"`
 	Regex          string             `json:"regex,omitempty"`
 	Refresh        int                `json:"refresh,omitempty"`
@@ -60,11 +60,12 @@ type templatingVar struct {
 }
 
 //Templating defines all templated dashbaord variables
-type templating struct {
+type Templating struct {
 	Enable bool            `json:"enable,omitempty"`
-	List   []templatingVar `json:"list,omitempty"`
+	List   []TemplatingVar `json:"list,omitempty"`
 }
 
-func NewTemplatingVar() *templatingVar {
-	return &templatingVar{}
+//NewTemplatingVar returns an initialised Templating variable
+func NewTemplatingVar() *TemplatingVar {
+	return &TemplatingVar{}
 }

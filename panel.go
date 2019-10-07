@@ -24,17 +24,17 @@ package main
 
 import "strings"
 
-//Panel contains all Grafana panel attributes
-type panel struct {
-	GridPos       panelGridPos  `json:"gridPos"`
+//Panel contains all Grafana Panel attributes
+type Panel struct {
+	GridPos       PanelGridPos  `json:"gridPos"`
 	Type          string        `json:"type"`
 	Title         string        `json:"title"`
 	ID            int           `json:"id"`
 	Mode          string        `json:"mode"`
 	Content       string        `json:"content,omitempty"`
-	Targets       []panelTarget `json:"targets,omitempty"`
+	Targets       []PanelTarget `json:"targets,omitempty"`
 	Description   string        `json:"description,omitempty"`
-	Legend        panelLegend   `json:"legend,omitempty"`
+	Legend        PanelLegend   `json:"legend,omitempty"`
 	Bars          bool          `json:"bars,omitempty"`
 	DashLength    int           `json:"dashLength"`
 	Dashes        bool          `json:"dashes,omitempty"`
@@ -51,40 +51,44 @@ type panel struct {
 	SpaceLength int          `json:"spaceLength,omitempty"`
 	Stack       bool         `json:"stack,omitempty"`
 	SteppedLine bool         `json:"steppedLine,omitempty"`
-	YAxes       []panelYAxes `json:"yaxes,omitempty"`
-	YAxis       panelYAxis   `json:"yaxis,omitempty"`
-	XAxis       panelXAxis   `json:"xaxis,omitempty"`
-	ToolTip     panelToolTip `json:"tooltip,omitempty"`
-	Options     panelOptions `json:"options,omitempty"`
+	YAxes       []PanelYAxes `json:"yaxes,omitempty"`
+	YAxis       PanelYAxis   `json:"yaxis,omitempty"`
+	XAxis       PanelXAxis   `json:"xaxis,omitempty"`
+	ToolTip     PanelToolTip `json:"tooltip,omitempty"`
+	Options     PanelOptions `json:"options,omitempty"`
 }
 
-type panelFieldOptionsThershold struct {
+//PanelFieldOptionsThershold describes a panel option thershold
+type PanelFieldOptionsThershold struct {
 	Value int    `json:"value,omitempty"`
 	Color string `json:"color,omitempty"`
 }
 
-type panelFieldOptionsDefaults struct {
-	Thresholds []panelFieldOptionsThershold `json:"thresholds,omitempty"`
+//PanelFieldOptionsDefaults describes a panel option defaults
+type PanelFieldOptionsDefaults struct {
+	Thresholds []PanelFieldOptionsThershold `json:"thresholds,omitempty"`
 	//Mappings[]
 	Unit string `json:"unit,omitempty"`
 }
 
-type panelFieldOptions struct {
+//PanelFieldOptions describes panel field options
+type PanelFieldOptions struct {
 	Values   bool                      `json:"values,omitempty"`
 	Calcs    []string                  `json:"calcs,omitempty"`
-	Defaults panelFieldOptionsDefaults `json:"defaults,omitempty"`
+	Defaults PanelFieldOptionsDefaults `json:"defaults,omitempty"`
 	//Override": {}
 }
 
-type panelOptions struct {
+//PanelOptions describes panel options
+type PanelOptions struct {
 	ShowThresholdMarkers bool              `json:"showThresholdMarkers,omitempty"`
 	ShowThresholdLabels  bool              `json:"showThresholdLabels,omitempty"`
-	FieldOptions         panelFieldOptions `json:"fieldOptions,omitempty"`
+	FieldOptions         PanelFieldOptions `json:"fieldOptions,omitempty"`
 	Orientation          string            `json:"orientation,omitempty"`
 }
 
-//PanelLegend contains all Legend options
-type panelLegend struct {
+//PanelLegend describes all Legend options
+type PanelLegend struct {
 	Avg          bool `json:"avg,omitempty"`
 	Current      bool `json:"current,omitempty"`
 	Max          bool `json:"max,omitempty"`
@@ -99,23 +103,23 @@ type panelLegend struct {
 	AlignAsTable bool `json:"alignAsTable,omitempty"`
 }
 
-//PanelToolTip contains panel tooltip options
-type panelToolTip struct {
+//PanelToolTip describes Panel tooltip options
+type PanelToolTip struct {
 	Shared    bool   `json:"shared,omitempty"`
 	Sort      int    `json:"sort,omitempty"`
 	ValueType string `json:"value_type,omitempty"`
 }
 
-//PanelXAxis contains panel xaxis options
-type panelXAxis struct {
+//PanelXAxis describes Panel xaxis options
+type PanelXAxis struct {
 	Buckets int    `json:"buckets,omitempty"`
 	Mode    string `json:"mode,omitempty"`
 	Name    string `json:"name,omitempty"`
 	Show    bool   `json:"show,omitempty"`
 }
 
-//PanelYAxes contains Yaxes options
-type panelYAxes struct {
+//PanelYAxes describes Yaxes options
+type PanelYAxes struct {
 	Decimals int    `json:"decimals,omitempty"`
 	Format   string `json:"format,omitempty"`
 	Label    string `json:"label,omitempty"`
@@ -125,14 +129,14 @@ type panelYAxes struct {
 	Show     bool   `json:"show,omitempty"`
 }
 
-//PanelYAxis contains panel yaxis options
-type panelYAxis struct {
+//PanelYAxis describes Panel yaxis options
+type PanelYAxis struct {
 	Align      bool `json:"align,omitempty"`
 	AlignLevel int  `json:"alignLevel,omitempty"`
 }
 
-//PanelGridPos holds a panels grid posistion
-type panelGridPos struct {
+//PanelGridPos holds a Panels grid posistion
+type PanelGridPos struct {
 	X int `json:"x,omitempty"`
 	Y int `json:"y,omitempty"`
 	H int `json:"h,omitempty"`
@@ -140,37 +144,39 @@ type panelGridPos struct {
 }
 
 //PanelTarget contains a Panel metrics experssion and order
-type panelTarget struct {
+type PanelTarget struct {
 	Expr         string `json:"expr,ommitempty"`        // "sum(rate(process_cpu_seconds_total [1m]))",
 	RefID        string `json:"refId,omitempty"`        //"A"
 	LegendFormat string `json:"legendFormat,omitempty"` //: "{{state}}"
 }
 
-type metricsTemplate struct {
+//MetricsTemplate describes an metrics expression template
+type MetricsTemplate struct {
 	template  string
 	delimiter string
 	metric    string
 }
 
-func NewPanel(title string) *panel {
-	return &panel{
+//NewPanel returns a new initialised Panel
+func NewPanel(title string) *Panel {
+	return &Panel{
 		Title:       title,
 		Type:        "graph",
 		Description: "Basic Panel",
-		Targets: []panelTarget{
+		Targets: []PanelTarget{
 			{
 				Expr:         "",
 				RefID:        "A",
 				LegendFormat: "",
 			},
 		}, //Targets
-		GridPos: panelGridPos{
+		GridPos: PanelGridPos{
 			X: 0,
 			Y: 0,
 			H: 0,
 			W: 0,
 		}, //GridPos
-		YAxes: []panelYAxes{
+		YAxes: []PanelYAxes{
 			{
 				Format:  "short",
 				LogBase: 1,
@@ -180,14 +186,14 @@ func NewPanel(title string) *panel {
 				Show: false,
 			},
 		},
-		XAxis: panelXAxis{
+		XAxis: PanelXAxis{
 			Mode: "time",
 			Name: "",
 			Show: true,
 		},
-		Options: panelOptions{
-			FieldOptions: panelFieldOptions{
-				Defaults: panelFieldOptionsDefaults{
+		Options: PanelOptions{
+			FieldOptions: PanelFieldOptions{
+				Defaults: PanelFieldOptionsDefaults{
 					Unit: "short",
 				},
 			},
@@ -195,45 +201,53 @@ func NewPanel(title string) *panel {
 	}
 }
 
-func (p *panel) SetGridPos(x, y, h, w int) {
+//SetGridPos sets the panel grid position
+func (p *Panel) SetGridPos(x, y, h, w int) {
 	p.GridPos.X = x
 	p.GridPos.Y = y
 	p.GridPos.H = h
 	p.GridPos.W = w
 }
 
-func (p *panel) SetType(ptype string) {
+//SetType sets the panel type
+func (p *Panel) SetType(ptype string) {
 	p.Type = ptype
 }
 
-func (p *panel) SetUnit(unit string) {
+//SetUnit sets the panel y axis unit type
+func (p *Panel) SetUnit(unit string) {
 	//if type is graph
 	p.YAxes[0].Format = unit
 	//if type is guage
 	p.Options.FieldOptions.Defaults.Unit = unit
 }
 
-func (p *panel) SetLegendFormat(format string) {
+//SetLegendFormat sets the panel legend format
+func (p *Panel) SetLegendFormat(format string) {
 	for i := range p.Targets {
 		p.Targets[i].LegendFormat = format
 	}
 }
 
-func (p *panel) SetDescription(description string) {
+//SetDescription sets the panel description
+func (p *Panel) SetDescription(description string) {
 	p.Description = description
 }
 
-func (p *panel) SetMetricExpr(expr string) {
+//SetMetricExpr sets the panels metrics expression
+func (p *Panel) SetMetricExpr(expr string) {
 	for i := range p.Targets {
 		p.Targets[i].Expr = expr
 	}
 }
 
-func (mt *metricsTemplate) MetricTemplate() string {
+//MetricTemplate returns a valid panel metric expression
+func (mt *MetricsTemplate) MetricTemplate() string {
 	return strings.Replace(mt.template, mt.delimiter, mt.metric, -1)
 }
 
-func (mt *metricsTemplate) SetMetric(metric string) {
+//SetMetric sets a metric
+func (mt *MetricsTemplate) SetMetric(metric string) {
 	mt.metric = metric
 }
 
