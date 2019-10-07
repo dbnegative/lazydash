@@ -22,6 +22,21 @@
 
 package main
 
+//Annotation defines a single Dashboard annotation
+type Annotation struct {
+	Datasource string `json:"datasource,omitempty"`
+	Enable     bool   `json:"enable,omitempty"`
+	Hide       bool   `json:"hide,omitempty"`
+	IconColor  string `json:"iconColor,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Type       string `json:"type,omitempty"`
+}
+
+//Annotations contains a list of annotations
+type Annotations struct {
+	List []Annotation `json:"list,omitempty"`
+}
+
 func NewAnnotation(name string, datasource string, enable bool, hide bool, atype string) *Annotation {
 	return &Annotation{
 		Datasource: datasource,

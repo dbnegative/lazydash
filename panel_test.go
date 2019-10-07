@@ -19,7 +19,6 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-
 package main
 
 import (
@@ -30,11 +29,13 @@ import (
 	"testing"
 )
 
-var dash Dashboard
-var testdata = "testdash.json"
+func Loadtestdata() dashboard {
 
-func init() {
+	testdata := "testdash.json"
+
 	jsonFile, err := os.Open(testdata)
+	defer jsonFile.Close()
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -45,88 +46,14 @@ func init() {
 		fmt.Println(err)
 	}
 
+	var dash = dashboard{}
 	json.Unmarshal(b, &dash)
-	defer jsonFile.Close()
+
+	return dash
 }
-
-func TestParseDashboard(t *testing.T) {
-
-	d := &Dashboard{
-		Title:    "demo",
-		TimeZone: "",
-		ID:       1,
-		Links:    []string{""},
-		UID:      "QIbx6hhZz",
-		Version:  4,
-		Time: TimeRange{
-			From: "now-5m",
-			To:   "now",
-		},
-		TimePicker: TimePicker{
-			RefreshIntervals: RefreshIntervals,
-		},
-		SchemaVersion: 20,
-		Style:         "dark",
-		Tags:          []string{""},
-		Templating: Templating{
-			List: []TemplatingVar{},
-		},
-	}
-
-	//fmt.Printf("%v", d)
-
-	if d.ID != dash.ID {
-		t.Errorf("ID does not match expected %v got %v ", d.ID, dash.ID)
-	}
-	if d.Title != dash.Title {
-		t.Errorf("Title does not match expected %v got %v ", d.Title, dash.Title)
-	}
-
-	if d.SchemaVersion != dash.SchemaVersion {
-		t.Errorf("Schema Versions do not match, expected %v got %v ", d.SchemaVersion, d.SchemaVersion)
-	}
-	if d.Style != dash.Style {
-		t.Errorf("Styles do not match, expected %v got %v ", d.Panels[0].Type, dash.Panels[0].Type)
-	}
-
-}
-
-//Check that Annotations conform
-func TestParseAnnotation(t *testing.T) {
-
-	a := Annotation{
-		Datasource: "-- Grafana --",
-		Enable:     true,
-		Hide:       true,
-		IconColor:  "rgba(0, 211, 255, 1)",
-		Name:       "Annotations & Alerts",
-		Type:       "dashboard",
-	}
-
-	if a.Datasource != dash.Annotations.List[0].Datasource {
-		t.Errorf("Datasource do not match, expected %v got %v ", a.Datasource, dash.Annotations.List[0].Datasource)
-	}
-	if a.Enable != dash.Annotations.List[0].Enable {
-		t.Errorf("Enabled does not match, expected %v got %v ", a.Enable, dash.Annotations.List[0].Enable)
-	}
-	if a.Hide != dash.Annotations.List[0].Hide {
-		t.Errorf("Hide does not match, expected %v got %v ", a.Hide, dash.Annotations.List[0].Hide)
-	}
-	if a.IconColor != dash.Annotations.List[0].IconColor {
-		t.Errorf("IconColor does not match, expected %v got %v ", a.IconColor, dash.Annotations.List[0].IconColor)
-	}
-	if a.Name != dash.Annotations.List[0].Name {
-		t.Errorf("Name does not match, expected %v got %v ", a.Name, dash.Annotations.List[0].Name)
-	}
-	if a.Type != dash.Annotations.List[0].Type {
-		t.Errorf("Type does not match, expected %v got %v ", a.Type, dash.Annotations.List[0].Type)
-	}
-
-}
-
-//Check that Panels conform
 func TestParsePanel(t *testing.T) {
-	p := Panel{
+	dash := Loadtestdata()
+	p := panel{
 		ID:           2,
 		Title:        "Counter",
 		Type:         "graph",
@@ -137,7 +64,7 @@ func TestParsePanel(t *testing.T) {
 		Fill:         1,
 		FillGradient: 0,
 
-		Legend: PanelLegend{
+		Legend: panelLegend{
 			AlignAsTable: true,
 			Avg:          false,
 			Current:      false,
@@ -162,14 +89,14 @@ func TestParsePanel(t *testing.T) {
 		SpaceLength:   10,
 		Stack:         false,
 		SteppedLine:   false,
-		XAxis: PanelXAxis{
+		XAxis: panelXAxis{
 			//Buckets: nil,
 			Mode: "time",
 			Name: "",
 			Show: true,
 			//Values: nil ,
 		},
-		YAxes: []PanelYAxes{
+		YAxes: []panelYAxes{
 			{
 				Decimals: 6,
 				Format:   "short",
@@ -190,19 +117,19 @@ func TestParsePanel(t *testing.T) {
 			},
 		},
 
-		YAxis: PanelYAxis{
+		YAxis: panelYAxis{
 			Align:      true,
 			AlignLevel: 1,
 		},
 
-		GridPos: GridPos{
+		GridPos: panelGridPos{
 			X: 0,
 			Y: 1,
 			H: 9,
 			W: 12,
 		}, //GridPos
 
-		Targets: []Target{
+		Targets: []panelTarget{
 			{
 				Expr:  "sum(rate(process_cpu_seconds_total [1m]))",
 				RefID: "A",

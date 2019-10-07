@@ -22,89 +22,80 @@
 
 package main
 
+import (
+	"strings"
+)
+
+var (
+	counterTmpl = &metricsTemplate{
+		template:  "sum(rate(:METRIC: [1m]))",
+		delimiter: ":METRIC:",
+	}
+	gaugeTmpl = &metricsTemplate{
+		template:  ":METRIC:",
+		delimiter: ":METRIC:",
+	}
+)
+
 //Generate a dashboard based off an ingested prometheus metrics
-func Generate(metrics MetricMap, gauges bool) *Dashboard {
+func Generate(metrics MetricMap, gauges bool) *dashboard {
 	dashboard := NewDashboard(*title)
 	count, lastx, lasty := 0, 0, 0
-	ptype := "graph"
-	if gauges {
-		ptype = "gauge"
-	}
+	//ptype := "graph"
+	//if gauges {
+	//	ptype = "gauge"
+	//}
 
 	for _, v := range metrics.List() {
-		labels := ""
 
-		if len(metrics.Get(v).Labels()) > 0 {
-			for _, v := range metrics.Get(v).Labels() {
-				labels = labels + v + ":" + "[{{" + v + "}}] "
-			}
-		} else {
-			labels = "Job:[{{job}}]"
-		}
+		p := NewPanel(strings.Replace(metrics.Get(v).Name(), "_", " ", -1))
+		p.SetDescription(metrics.Get(v).Help())
+		p.SetUnit(metrics.Get(v).Unit())
+		p.SetLegendFormat(CreateLegendFormat(metrics.Get(v).Labels(), ""))
+		p.SetGridPos(lastx, lasty, 7, 12)
 
 		switch metrics.Get(v).Type() {
+
 		case "counter":
+
+			counterTmpl.SetMetric(metrics.Get(v).Name() + metrics.Get(v).Suffix())
+			p.SetMetricExpr(counterTmpl.MetricTemplate())
+			p.SetType("graph")
 
 			//add 2 panels to a row
 			if (count % 2) < 1 {
+				dashboard.AddPanel(*p)
 				lastx = 0
-				dashboard.AddPanel(*NewPanel(metrics.Get(v).Help(),
-					"graph",
-					metrics.Get(v).Help(),
-					metrics.Get(v).Name()+metrics.Get(v).Suffix(),
-					metrics.Get(v).Unit(),
-					lastx,
-					lasty,
-					"sum(rate(:METRIC: [1m]))",
-					":METRIC:",
-					labels))
 				lasty = lasty + 9
 				count++
 			} else {
 				lastx = lastx + 12
-				dashboard.AddPanel(*NewPanel(metrics.Get(v).Help(),
-					"graph", metrics.Get(v).Help(),
-					metrics.Get(v).Name()+metrics.Get(v).Suffix(),
-					metrics.Get(v).Unit(),
-					lastx,
-					lasty,
-					"sum(rate(:METRIC: [1m]))",
-					":METRIC:",
-					labels))
+				dashboard.AddPanel(*p)
 				count++
 			}
 
 		case "gauge":
+
+			gaugeTmpl.SetMetric(metrics.Get(v).Name() + metrics.Get(v).Suffix())
+			p.SetMetricExpr(gaugeTmpl.MetricTemplate())
+			if gauges {
+				p.SetType("gauges")
+			}
+
 			//add 2 panels to a row
 			if (count % 2) < 1 {
 				lastx = 0
-				dashboard.AddPanel(*NewPanel(metrics.Get(v).Help(),
-					ptype,
-					metrics.Get(v).Help(),
-					metrics.Get(v).Name()+metrics.Get(v).Suffix(),
-					metrics.Get(v).Unit(),
-					lastx,
-					lasty,
-					":METRIC:",
-					":METRIC:",
-					labels))
+				dashboard.AddPanel(*p)
 				lasty = lasty + 9
 				count++
 			} else {
 				lastx = lastx + 12
-				dashboard.AddPanel(*NewPanel(metrics.Get(v).Help(),
-					ptype, metrics.Get(v).Help(),
-					metrics.Get(v).Name()+metrics.Get(v).Suffix(),
-					metrics.Get(v).Unit(),
-					lastx,
-					lasty,
-					":METRIC:",
-					":METRIC:",
-					labels))
+				dashboard.AddPanel(*p)
 				count++
 			}
 
 		}
 	}
+	//fmt.Printf("%+v\n", dashboard)
 	return dashboard
 }

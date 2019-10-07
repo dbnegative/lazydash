@@ -19,52 +19,49 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-
 package main
 
-import (
-	"os"
+import "testing"
 
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
-)
+func TestParseDashboard(t *testing.T) {
+	dash := Loadtestdata()
 
-var (
-	app    = kingpin.New("lazydash", "generate grafana dashboard json from prometheus metrics data via file or by | pipe")
-	file   = app.Flag("file", "Parse metrics from file.").Short('f').String()
-	title  = app.Flag("title", "Dashboard title").Short('t').Default("Demo").String()
-	stdin  = app.Flag("stdin", "Read from stdin").Default("true").Bool()
-	pretty = app.Flag("pretty", "Print pretty indented JSON").Short('p').Default("false").Bool()
-	gauges = app.Flag("gauges", "Render gauge values as gauge panel types instead of graph").Short('g').Default("false").Bool()
-)
-
-func main() {
-
-	app.Version("0.1.0")
-	app.HelpFlag.Short('h')
-
-	kingpin.MustParse(app.Parse(os.Args[1:]))
-
-	var (
-		b       []byte
-		metrics MetricMap
-	)
-
-	switch {
-	case *file != "": //Read from file
-		b, _ = LoadFromFile(*file)
-	case *stdin && *file == "": //Read from STDIN
-		b = LoadFromStdin()
+	d := &dashboard{
+		Title:    "demo",
+		TimeZone: "",
+		ID:       1,
+		Links:    []string{""},
+		UID:      "QIbx6hhZz",
+		Version:  4,
+		Time: timeRange{
+			From: "now-5m",
+			To:   "now",
+		},
+		TimePicker: timePicker{
+			RefreshIntervals: RefreshIntervals,
+		},
+		SchemaVersion: 20,
+		Style:         "dark",
+		Tags:          []string{""},
+		Templating: templating{
+			List: []templatingVar{},
+		},
 	}
 
-	if len(b) > 0 {
-		metrics = ParseMetrics(b)
+	//fmt.Printf("%v", d)
+
+	if d.ID != dash.ID {
+		t.Errorf("ID does not match expected %v got %v ", d.ID, dash.ID)
+	}
+	if d.Title != dash.Title {
+		t.Errorf("Title does not match expected %v got %v ", d.Title, dash.Title)
 	}
 
-	if len(metrics.List()) > 0 {
-		dashboard := Generate(metrics, *gauges)
-		dashboard.DumpJSON(*pretty)
-	} else {
-		os.Exit(1)
+	if d.SchemaVersion != dash.SchemaVersion {
+		t.Errorf("Schema Versions do not match, expected %v got %v ", d.SchemaVersion, d.SchemaVersion)
+	}
+	if d.Style != dash.Style {
+		t.Errorf("Styles do not match, expected %v got %v ", d.Panels[0].Type, dash.Panels[0].Type)
 	}
 
 }
