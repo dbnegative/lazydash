@@ -22,7 +22,10 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 type Metric struct {
 	help   string
@@ -134,6 +137,8 @@ func (m *MetricMap) List() []string {
 	for k := range m.metrics {
 		list = append(list, k)
 	}
+	sort.Strings(list)
+
 	return list
 }
 func (m *MetricMap) Init() {
