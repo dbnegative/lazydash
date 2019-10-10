@@ -24,8 +24,8 @@ package main
 import "testing"
 
 //Check that Annotations conform
-func TestParseAnnotation(t *testing.T) {
-	dash := Loadtestdata()
+func TestAnnotation(t *testing.T) {
+	dash := LoadTestData()
 
 	a := Annotation{
 		Datasource: "-- Grafana --",

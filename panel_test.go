@@ -22,37 +22,11 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"os"
 	"testing"
 )
 
-func Loadtestdata() Dashboard {
-
-	testdata := "testdash.json"
-
-	jsonFile, err := os.Open(testdata)
-	defer jsonFile.Close()
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	b, err := ioutil.ReadAll(jsonFile)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	var dash = Dashboard{}
-	json.Unmarshal(b, &dash)
-
-	return dash
-}
-func TestParsePanel(t *testing.T) {
-	dash := Loadtestdata()
+func TestPanel(t *testing.T) {
+	dash := LoadTestData()
 	p := Panel{
 		ID:           2,
 		Title:        "Counter",

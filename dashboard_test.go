@@ -23,8 +23,8 @@ package main
 
 import "testing"
 
-func TestParseDashboard(t *testing.T) {
-	dash := Loadtestdata()
+func TestDashboard(t *testing.T) {
+	dash := LoadTestData()
 
 	d := &Dashboard{
 		Title:    "demo",
