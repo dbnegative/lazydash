@@ -1,5 +1,6 @@
 package main
 
+//Config contains configuration options
 type Config struct {
 	Title             string
 	Gauges            bool
@@ -12,5 +13,8 @@ type Config struct {
 	Delimiter         string
 	CounterLegend     string
 	GaugeLegend       string
+	Table             bool
 	URL               string
+	Token             string
+	GrafanaHost       string
 }

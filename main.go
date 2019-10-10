@@ -23,28 +23,37 @@
 package main
 
 import (
-	"log"
 	"os"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
+var app = kingpin.New("Lazydash", "Generate a Grafana dashboard from Prometheus metrics data via file, stdin or HTTP url")
+
 func main() {
+
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	cfg := Config{}
 
-	app := kingpin.New("lazydash", "generate grafana dashboard json from prometheus metrics data via file or by | pipe")
 	app.Flag("file", "Parse metrics from file.").Default("").Short('f').StringVar(&cfg.File)
 	app.Flag("title", "Dashboard title").Short('t').Default("Demo").StringVar(&cfg.Title)
 	app.Flag("stdin", "Read from stdin").Default("true").BoolVar(&cfg.Stdin)
-	app.Flag("url", "Fetch prometheus data from http url").Default("").StringVar(&cfg.URL)
+	app.Flag("url", "Fetch Prometheus data from HTTP(S) url").Default("").StringVar(&cfg.URL)
 	app.Flag("pretty", "Print pretty indented JSON").Short('p').Default("false").BoolVar(&cfg.Pretty)
-	app.Flag("gauges", "Render gauge values as gauge panel types instead of graph").Short('g').Default("false").BoolVar(&cfg.Gauges)
+	app.Flag("gauges", "Render gauge values as gauge panel type instead of graph").Short('g').Default("false").BoolVar(&cfg.Gauges)
+	app.Flag("table", "Render legend as a table").Default("false").BoolVar(&cfg.Table)
 	app.Flag("set-counter-expr", "Set custom meterics query expression for counter type metric").Default("sum(rate(:METRIC: [1m]))").StringVar(&cfg.CounterExprTmpl)
 	app.Flag("set-gauge-expr", "Set custom meterics query expression for gauge type metric").Default(":METRIC:").StringVar(&cfg.GaugeExprTmpl)
 	app.Flag("set-delimiter", "Set custom meterics delimiter used to insert metric name into expression, only used if a custom expression is set").Default(":METRIC:").StringVar(&cfg.Delimiter)
 	app.Flag("set-counter-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.CounterLegend)
-	app.Flag("set-gauge-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.CounterLegend)
+	app.Flag("set-gauge-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.GaugeLegend)
+	app.Flag("grafana-url", "Set the grafana api url e.g http://grafana.example.com:3000").Short('H').Default("").StringVar(&cfg.GrafanaHost)
+	app.Flag("token", "Set the grafana api token").Short('T').Default("").StringVar(&cfg.Token)
 
 	app.Version("0.2.0")
 	app.HelpFlag.Short('h')
@@ -67,18 +76,24 @@ func main() {
 
 	//have we received input?
 	if len(data) < 1 {
-		log.Fatalln("No data recieved on any input")
+		app.FatalUsage("No data recieved on any input \n")
 	}
 
 	metrics = ParseMetrics(data)
 	//do we have any parsed metrics?
 	if len(metrics.List()) > 0 {
+
 		dashboard := NewDashboard(cfg.Title)
 		dashboard.Generate(metrics, cfg)
-		dashboard.DumpJSON(cfg.Pretty)
+
+		if cfg.GrafanaHost == "" { //Print to StdOut
+			dashboard.DumpJSON(cfg.Pretty)
+		} else { // Post to grafana API
+			PostDashboard(cfg.GrafanaHost, cfg.Token, dashboard)
+		}
+
 	} else {
-		log.Fatalln("No metrics parsed from input")
-		os.Exit(1)
+		app.Fatalf("No metrics parsed from input, Did you pipe anything in???")
 	}
 
 }

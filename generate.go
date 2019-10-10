@@ -57,8 +57,13 @@ func (p *PanelGridLayout) UpdateY(y int) {
 
 //UpdateX updates the last x grid posistion
 func (p *PanelGridLayout) UpdateX(x int) {
-	p.X = p.X + x
-	p.Count = p.Count + 1
+	if x > 0 {
+		p.X = p.X + x
+		p.Count = p.Count + 1
+	} else {
+		p.X = 0
+	}
+
 }
 
 //Generate a Dashboard based off an ingested prometheus metrics
@@ -84,6 +89,15 @@ func (d *Dashboard) Generate(metrics MetricMap, cfg Config) {
 		p.SetUnit(metrics.Get(v).Unit())
 		p.SetGridPos(pgrid.X, pgrid.Y, 7, 12)
 
+		if cfg.Table {
+			p.Legend = PanelLegend{
+				Show:         true,
+				Current:      true,
+				Values:       true,
+				AlignAsTable: true,
+			}
+		}
+
 		switch metrics.Get(v).Type() {
 
 		case "counter":
@@ -107,7 +121,7 @@ func (d *Dashboard) Generate(metrics MetricMap, cfg Config) {
 					cfg.GaugeLegend))
 
 			if cfg.Gauges {
-				p.SetType("gauges")
+				p.SetType("gauge")
 			}
 
 			d.AddPanel(*p)
@@ -115,6 +129,7 @@ func (d *Dashboard) Generate(metrics MetricMap, cfg Config) {
 
 		//add 2 Panels to a row
 		if (pgrid.Count % 2) < 1 {
+			pgrid.UpdateX(0)
 			pgrid.UpdateY(9)
 		} else {
 			pgrid.UpdateX(12)

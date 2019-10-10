@@ -42,37 +42,37 @@ type TimeRange struct {
 
 //Dashboard holds all other Grafana sub containers
 type Dashboard struct {
-	ID            int         `json:"id,omitempty"`
+	ID            int         `json:"id"`
 	UID           string      `json:"uid,ommitempty"`
-	Title         string      `json:"title,omitempty"` // "New Dashboard",
-	Tags          []string    `json:"tags,omitempty"`
-	TimeZone      string      `json:"Timezone,omitempty"`
-	Editable      bool        `json:"editable,omitempty"`
-	HideControls  string      `json:"hideControls,omitempty"`
-	GraphToolTip  int         `json:"graphTooltip,omitempty"`
-	Panels        []Panel     `json:"Panels,omitempty"`
-	Time          TimeRange   `json:"Time,omitempty"`
-	TimePicker    TimePicker  `json:"Timepicker,omitempty"`
-	Templating    Templating  `json:"templating,omitempty"`
-	Annotations   Annotations `json:"annotations,omitempty"`
-	Refresh       string      `json:"refresh,omitempty"`
-	SchemaVersion int         `json:"schemaVersion,omitempty"`
-	Version       int         `json:"version,omitempty"`
-	Links         []string    `json:"links,omitempty"`
-	Style         string      `json:"style,omitempty"`
+	Title         string      `json:"title"` // "New Dashboard",
+	Tags          []string    `json:"tags"`
+	TimeZone      string      `json:"timezone"`
+	Editable      bool        `json:"editable"`
+	HideControls  string      `json:"hideControls"`
+	GraphToolTip  int         `json:"graphTooltip"`
+	Panels        []Panel     `json:"panels"`
+	Time          TimeRange   `json:"time"`
+	TimePicker    TimePicker  `json:"timepicker"`
+	Templating    Templating  `json:"templating"`
+	Annotations   Annotations `json:"annotations"`
+	Refresh       string      `json:"refresh"`
+	SchemaVersion int         `json:"schemaVersion"`
+	Version       int         `json:"version"`
+	Links         []string    `json:"links"`
+	Style         string      `json:"style"`
 }
 
 //TimePicker comtains all attribuyes used to set Dashboard Time options
 type TimePicker struct {
-	Collapse         bool     `json:"collapse,omitempty"`
-	Enable           bool     `json:"enable,omitempty"`
-	Notice           bool     `json:"notice,omitempty"`
-	Now              bool     `json:"now,omitempty"`
-	RefreshIntervals []string `json:"refresh_intervals,omitempty"`
-	Status           string   `json:"status,omitempty"`
-	TimeOptions      []string `json:"Time_options"`
-	Type             string   `json:"type,omitempty"`
-	NowDelay         string   `json:"nowDelay,omitempty"`
+	Collapse         bool     `json:"collapse"`
+	Enable           bool     `json:"enable"`
+	Notice           bool     `json:"notice"`
+	Now              bool     `json:"now"`
+	RefreshIntervals []string `json:"refresh_intervals"`
+	Status           string   `json:"status"`
+	TimeOptions      []string `json:"time_options"`
+	Type             string   `json:"type"`
+	NowDelay         string   `json:"nowDelay"`
 }
 
 //NewDashboard initialises a new Dashboard
@@ -81,9 +81,9 @@ func NewDashboard(title string) *Dashboard {
 	return &Dashboard{
 		Title:    title,
 		TimeZone: "",
-		ID:       1,
 		Links:    []string{""},
 		Version:  1,
+		Editable: true,
 		Time: TimeRange{
 			From: "now-5m",
 			To:   "now",
@@ -91,9 +91,8 @@ func NewDashboard(title string) *Dashboard {
 		TimePicker: TimePicker{
 			RefreshIntervals: RefreshIntervals,
 		},
-		//SchemaVersion: 20,
-		//Style:         "dark",
-		Tags: []string{""},
+
+		Tags: []string{"Lazydash"},
 		Templating: Templating{
 			List: []TemplatingVar{},
 		},
