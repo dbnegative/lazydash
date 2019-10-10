@@ -37,19 +37,52 @@ var (
 	}
 )
 
-//Generate a Dashboard based off an ingested prometheus metrics
-func Generate(metrics MetricMap, gauges bool) *Dashboard {
+//PanelGridLayout describes a panel grid layout
+type PanelGridLayout struct {
+	X     int
+	Y     int
+	Count int
+}
 
-	Dashboard := NewDashboard(*title)
-	count, lastx, lasty := 0, 0, 0
+//NewPanelGridLayout returns a new panel grid layout
+func NewPanelGridLayout() *PanelGridLayout {
+	return &PanelGridLayout{X: 0, Y: 0, Count: 0}
+}
+
+//UpdateY updates the last y grid posistion
+func (p *PanelGridLayout) UpdateY(y int) {
+	p.Y = p.Y + y
+	p.Count = p.Count + 1
+}
+
+//UpdateX updates the last x grid posistion
+func (p *PanelGridLayout) UpdateX(x int) {
+	p.X = p.X + x
+	p.Count = p.Count + 1
+}
+
+//Generate a Dashboard based off an ingested prometheus metrics
+func (d *Dashboard) Generate(metrics MetricMap, cfg Config) {
+
+	//count, lastx, lasty := 0, 0, 0
+	pgrid := NewPanelGridLayout()
+
+	if len(cfg.CounterExprTmpl) > 0 {
+		counterTmpl.SetTemplate(string(cfg.CounterExprTmpl))
+		counterTmpl.SetDelimiter(cfg.Delimiter)
+	}
+
+	if len(cfg.GaugeExprTmpl) > 0 {
+		gaugeTmpl.SetTemplate(string(cfg.GaugeExprTmpl))
+		counterTmpl.SetDelimiter(cfg.Delimiter)
+	}
 
 	for _, v := range metrics.List() {
 
 		p := NewPanel(strings.Replace(metrics.Get(v).Name(), "_", " ", -1))
 		p.SetDescription(metrics.Get(v).Help())
 		p.SetUnit(metrics.Get(v).Unit())
-		p.SetLegendFormat(CreateLegendFormat(metrics.Get(v).Labels(), ""))
-		p.SetGridPos(lastx, lasty, 7, 12)
+		p.SetGridPos(pgrid.X, pgrid.Y, 7, 12)
 
 		switch metrics.Get(v).Type() {
 
@@ -57,42 +90,35 @@ func Generate(metrics MetricMap, gauges bool) *Dashboard {
 
 			counterTmpl.SetMetric(metrics.Get(v).Name() + metrics.Get(v).Suffix())
 			p.SetMetricExpr(counterTmpl.MetricTemplate())
+			p.SetLegendFormat(
+				CreateLegendFormat(
+					metrics.Get(v).Labels(),
+					cfg.CounterLegend))
 			p.SetType("graph")
-
-			//add 2 Panels to a row
-			if (count % 2) < 1 {
-				Dashboard.AddPanel(*p)
-				lastx = 0
-				lasty = lasty + 9
-				count++
-			} else {
-				lastx = lastx + 12
-				Dashboard.AddPanel(*p)
-				count++
-			}
+			d.AddPanel(*p)
 
 		case "gauge":
 
 			gaugeTmpl.SetMetric(metrics.Get(v).Name() + metrics.Get(v).Suffix())
 			p.SetMetricExpr(gaugeTmpl.MetricTemplate())
-			if gauges {
+			p.SetLegendFormat(
+				CreateLegendFormat(
+					metrics.Get(v).Labels(),
+					cfg.GaugeLegend))
+
+			if cfg.Gauges {
 				p.SetType("gauges")
 			}
 
-			//add 2 Panels to a row
-			if (count % 2) < 1 {
-				lastx = 0
-				Dashboard.AddPanel(*p)
-				lasty = lasty + 9
-				count++
-			} else {
-				lastx = lastx + 12
-				Dashboard.AddPanel(*p)
-				count++
-			}
-
+			d.AddPanel(*p)
 		}
+
+		//add 2 Panels to a row
+		if (pgrid.Count % 2) < 1 {
+			pgrid.UpdateY(9)
+		} else {
+			pgrid.UpdateX(12)
+		}
+
 	}
-	//fmt.Printf("%+v\n", Dashboard)
-	return Dashboard
 }

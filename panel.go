@@ -243,7 +243,7 @@ func (p *Panel) SetMetricExpr(expr string) {
 
 //MetricTemplate returns a valid panel metric expression
 func (mt *MetricsTemplate) MetricTemplate() string {
-	return strings.Replace(mt.template, mt.delimiter, mt.metric, -1)
+	return strings.Replace(mt.template, mt.delimiter, mt.metric, 1)
 }
 
 //SetMetric sets a metric
@@ -251,12 +251,22 @@ func (mt *MetricsTemplate) SetMetric(metric string) {
 	mt.metric = metric
 }
 
+//SetDelimiter sets a metric delimiter
+func (mt *MetricsTemplate) SetDelimiter(delimiter string) {
+	mt.delimiter = delimiter
+}
+
+//SetTemplate sets a metric
+func (mt *MetricsTemplate) SetTemplate(template string) {
+	mt.template = template
+}
+
 //CreateLegendFormat returns a foramtted LegendFormat string based on metric labels
 func CreateLegendFormat(labels []string, fallback string) string {
 
 	if len(labels) < 1 {
 		if fallback != "" {
-			return fallback + ":[{{" + fallback + "}}]"
+			return fallback
 		}
 		return "Job:[{{job}}]"
 	}
