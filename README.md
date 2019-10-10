@@ -13,7 +13,6 @@ Version: 0.3.0
 # TYPE builder_builds_triggered_total counter
 builder_builds_triggered_total 0"
 ```
-
 # Features
 
 * Generate dashboard directly from any prometheus metrics endpoint
@@ -22,6 +21,8 @@ builder_builds_triggered_total 0"
 * Panels use the metrics HELP field as the description
 * Override default query expressions and legend formats for metrics types 
 
+<img src="lazydash.gif" alt="demo" width="800"/>
+---
 # Usage
 
 ```
@@ -52,6 +53,7 @@ Flags:
   -T, --token=""        Set the grafana api token
       --version         Show application version.
 ```
+---
 # Examples
 
 ## Pull metric types from prometheus HTTP endpoint and post to the grafana API
@@ -78,7 +80,7 @@ cat promdata.txt | lazydash -t "Demo" -p
 ```
 echo "# HELP builder_builds_triggered_total Number of triggered image builds \n# TYPE builder_builds_triggered_total counter\nbuilder_builds_triggered_total 0" |lazydash -t "simple dashboard" -p
 ```
-
+---
 # Build and Install 
 
 Requirement: go 1.13
@@ -87,5 +89,5 @@ Requirement: go 1.13
 go get -u github.com/dbnegative/lazydash
 chmod 755 $GOPATH/bin/lazydash
 ln -s $GOPATH/bin/lazydash /usr/local/bin/lazydash
-``
+```
 
