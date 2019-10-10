@@ -23,6 +23,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -33,9 +34,10 @@ func main() {
 	cfg := Config{}
 
 	app := kingpin.New("lazydash", "generate grafana dashboard json from prometheus metrics data via file or by | pipe")
-	app.Flag("file", "Parse metrics from file.").Short('f').StringVar(&cfg.File)
+	app.Flag("file", "Parse metrics from file.").Default("").Short('f').StringVar(&cfg.File)
 	app.Flag("title", "Dashboard title").Short('t').Default("Demo").StringVar(&cfg.Title)
 	app.Flag("stdin", "Read from stdin").Default("true").BoolVar(&cfg.Stdin)
+	app.Flag("url", "Fetch prometheus data from http url").Default("").StringVar(&cfg.URL)
 	app.Flag("pretty", "Print pretty indented JSON").Short('p').Default("false").BoolVar(&cfg.Pretty)
 	app.Flag("gauges", "Render gauge values as gauge panel types instead of graph").Short('g').Default("false").BoolVar(&cfg.Gauges)
 	app.Flag("set-counter-expr", "Set custom meterics query expression for counter type metric").Default("sum(rate(:METRIC: [1m]))").StringVar(&cfg.CounterExprTmpl)
@@ -44,7 +46,7 @@ func main() {
 	app.Flag("set-counter-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.CounterLegend)
 	app.Flag("set-gauge-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.CounterLegend)
 
-	app.Version("0.1.0")
+	app.Version("0.2.0")
 	app.HelpFlag.Short('h')
 
 	kingpin.MustParse(app.Parse(os.Args[1:]))
@@ -55,6 +57,8 @@ func main() {
 	)
 
 	switch {
+	case cfg.URL != "" && cfg.File == "": //Read from URL
+		data = FetchURL(cfg.URL)
 	case cfg.File != "": //Read from file
 		data, _ = LoadFromFile(cfg.File)
 	case cfg.Stdin && cfg.File == "": //Read from STDIN
@@ -62,16 +66,18 @@ func main() {
 	}
 
 	//have we received input?
-	if len(data) > 0 {
-		metrics = ParseMetrics(data)
+	if len(data) < 1 {
+		log.Fatalln("No data recieved on any input")
 	}
 
+	metrics = ParseMetrics(data)
 	//do we have any parsed metrics?
 	if len(metrics.List()) > 0 {
 		dashboard := NewDashboard(cfg.Title)
 		dashboard.Generate(metrics, cfg)
 		dashboard.DumpJSON(cfg.Pretty)
 	} else {
+		log.Fatalln("No metrics parsed from input")
 		os.Exit(1)
 	}
 

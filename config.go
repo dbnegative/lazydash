@@ -12,4 +12,5 @@ type Config struct {
 	Delimiter         string
 	CounterLegend     string
 	GaugeLegend       string
+	URL               string
 }
