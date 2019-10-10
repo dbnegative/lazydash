@@ -35,6 +35,7 @@ Flags:
       --url=""          Fetch Prometheus data from HTTP(S) url
   -p, --pretty          Print pretty indented JSON
   -g, --gauges          Render gauge values as gauge panel type instead of graph
+      --table           Render legend as a table
       --set-counter-expr="sum(rate(:METRIC: [1m]))"  
                         Set custom meterics query expression for counter type metric
       --set-gauge-expr=":METRIC:"  
@@ -45,14 +46,13 @@ Flags:
                         Set the default counter panel legend format
       --set-gauge-legend="Job:[{{job}}]"  
                         Set the default counter panel legend format
-      --table           Render legend as a table
   -H, --grafana-url=""  Set the grafana api url e.g http://grafana.example.com:3000
   -T, --token=""        Set the grafana api token
       --version         Show application version.
 ```
 # Examples
 
-## Pull metric types form http endpoint and post to grafana
+## Pull metric types from prometheus HTTP endpoint and post to the grafana API
 ```
 lazydash -p --url="http://localhost:9323/metrics" -H http://localhost:3000 -T "eyJrIjoiRzRTUGV1a2RWcjgzbklvVzdXenIySEhJWEJlSkx4UksiLCJuIjoidGVzdCIsImlkIjoxfQ==" --table
 ```
