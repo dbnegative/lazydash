@@ -19,13 +19,23 @@ usage: lazydash [<flags>]
 generate grafana dashboard json from prometheus metrics data via file or by | pipe
 
 Flags:
-  -h, --help         Show context-sensitive help (also try --help-long and --help-man).
-  -f, --file=FILE    Parse metrics from file.
-  -t, --title=TITLE  Dashboard title
-      --stdin        Read from stdin
-  -p, --pretty       Print pretty indented JSON
-  -g, --gauges       Render gauge values as gauge panel types instead of graph
-      --version      Show application version.
+  -h, --help          Show context-sensitive help (also try --help-long and --help-man).
+  -f, --file=FILE     Parse metrics from file.
+  -t, --title="Demo"  Dashboard title
+      --stdin         Read from stdin
+  -p, --pretty        Print pretty indented JSON
+  -g, --gauges        Render gauge values as gauge panel types instead of graph
+      --set-counter-expr="sum(rate(:METRIC: [1m]))"  
+                      Set custom meterics query expression for counter type metric
+      --set-gauge-expr=":METRIC:"  
+                      Set custom meterics query expression for gauge type metric
+      --set-delimiter=":METRIC:"  
+                      Set custom meterics delimiter used to insert metric name into expression, only used if a custom expression is set
+      --set-counter-legend="Job:[{{job}}]"  
+                      Set the default counter panel legend format
+      --set-gauge-legend="Job:[{{job}}]"  
+                      Set the default counter panel legend format
+      --version       Show application version.
 ```
 # Examples
 
