@@ -4,6 +4,8 @@ Auto generate Grafana dashboards based on prometheus metrics endpoints. Allows f
 
 # Notes
 
+Version: 0.3.0
+
 * Only Supports Counter and Gauge Types at the moment
 * Assumes metrics adhere to prometheus metrics naming conventions and standards e.g:
 ```
@@ -76,3 +78,14 @@ cat promdata.txt | lazydash -t "Demo" -p
 ```
 echo "# HELP builder_builds_triggered_total Number of triggered image builds \n# TYPE builder_builds_triggered_total counter\nbuilder_builds_triggered_total 0" |lazydash -t "simple dashboard" -p
 ```
+
+# Build and Install 
+
+Requirement: go 1.13
+
+```
+go get -u github.com/dbnegative/lazydash
+chmod 755 $GOPATH/bin/lazydash
+ln -s $GOPATH/bin/lazydash /usr/local/bin/lazydash
+``
+
