@@ -55,7 +55,7 @@ func main() {
 	app.Flag("grafana-url", "Set the grafana api url e.g http://grafana.example.com:3000").Short('H').Default("").StringVar(&cfg.GrafanaHost)
 	app.Flag("token", "Set the grafana api token").Short('T').Default("").StringVar(&cfg.Token)
 
-	app.Version("0.2.0")
+	app.Version("0.3.0")
 	app.HelpFlag.Short('h')
 
 	kingpin.MustParse(app.Parse(os.Args[1:]))
