@@ -12,3 +12,6 @@
 *.out
 
 vendor/*
+dash1.json
+lazydash
+prometheus.yaml
