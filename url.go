@@ -2,9 +2,10 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
+
+	log "k8s.io/klog"
 )
 
 //FetchURL fetches a http URL
@@ -16,14 +17,14 @@ func FetchURL(url string) []byte {
 	resp, err := http.Get(url)
 
 	if err != nil {
-		log.Fatalf("Failed to connect to %s Error:[%v]", url, err)
+		log.Fatal("Failed to connect to url, ", err.Error())
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatalf("Failed to read response body Error:[%v]", err)
+		log.Fatal("Failed to read response body, ", err.Error())
 	}
 	return body
 }
