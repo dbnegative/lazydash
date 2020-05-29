@@ -23,6 +23,7 @@ builder_builds_triggered_total 0"
 
 <img src="lazydash.gif" alt="demo" width="800"/>
 ---
+
 # Usage
 
 ```
@@ -54,6 +55,7 @@ Flags:
       --version         Show application version.
 ```
 ---
+
 # Examples
 
 ## Pull metric types from prometheus HTTP endpoint and post to the grafana API
@@ -81,6 +83,7 @@ cat promdata.txt | lazydash -t "Demo" -p
 echo "# HELP builder_builds_triggered_total Number of triggered image builds \n# TYPE builder_builds_triggered_total counter\nbuilder_builds_triggered_total 0" |lazydash -t "simple dashboard" -p
 ```
 ---
+
 # Build and Install 
 
 Requirement: go 1.13
