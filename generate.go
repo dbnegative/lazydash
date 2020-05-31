@@ -27,6 +27,10 @@ import (
 )
 
 var (
+	summaryTmpl = &MetricsTemplate{
+		template:  "sum(rate(:METRIC:_sum[5m])) / sum(rate(:METRIC:_count[5m]))",
+		delimiter: ":METRIC:",
+	}
 	counterTmpl = &MetricsTemplate{
 		template:  "sum(rate(:METRIC: [1m]))",
 		delimiter: ":METRIC:",
@@ -99,6 +103,17 @@ func (d *Dashboard) Generate(metrics MetricMap, cfg Config) {
 		}
 
 		switch metrics.Get(v).Type() {
+
+		case "summary":
+			summaryTmpl.SetMetric(metrics.Get(v).Name())
+
+			p.SetMetricExpr(summaryTmpl.MetricTemplate())
+			p.SetLegendFormat(
+				CreateLegendFormat(
+					metrics.Get(v).Labels(),
+					cfg.SummaryLegend))
+			p.SetType("graph")
+			d.AddPanel(*p)
 
 		case "counter":
 

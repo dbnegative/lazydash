@@ -76,6 +76,8 @@ func ParseMetrics(metrics []byte) MetricMap {
 			//Try guess the metrics unit type
 			if strings.Contains(name, "_seconds") {
 				mm.Get(name).SetUnit("s")
+			} else if strings.Contains(name, "_milliseconds") {
+				mm.Get(name).SetUnit("ms")
 			} else if strings.Contains(name, "_bytes") {
 				mm.Get(name).SetUnit("decbytes")
 			} else {

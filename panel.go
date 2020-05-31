@@ -243,7 +243,7 @@ func (p *Panel) SetMetricExpr(expr string) {
 
 //MetricTemplate returns a valid panel metric expression
 func (mt *MetricsTemplate) MetricTemplate() string {
-	return strings.Replace(mt.template, mt.delimiter, mt.metric, 1)
+	return strings.ReplaceAll(mt.template, mt.delimiter, mt.metric)
 }
 
 //SetMetric sets a metric
