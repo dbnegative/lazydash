@@ -49,6 +49,7 @@ func main() {
 	app.Flag("table", "Render legend as a table").Default("false").BoolVar(&cfg.Table)
 	app.Flag("set-counter-expr", "Set custom meterics query expression for counter type metric").Default("sum(rate(:METRIC: [1m]))").StringVar(&cfg.CounterExprTmpl)
 	app.Flag("set-gauge-expr", "Set custom meterics query expression for gauge type metric").Default(":METRIC:").StringVar(&cfg.GaugeExprTmpl)
+	app.Flag("set-summary-expr", "Set custom meterics query expression for summary type metric").Default(":METRIC:").StringVar(&cfg.SummaryExprTmpl)
 	app.Flag("set-delimiter", "Set custom meterics delimiter used to insert metric name into expression, only used if a custom expression is set").Default(":METRIC:").StringVar(&cfg.Delimiter)
 	app.Flag("set-counter-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.CounterLegend)
 	app.Flag("set-gauge-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.GaugeLegend)

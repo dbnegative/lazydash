@@ -44,6 +44,8 @@ Flags:
                         Set custom meterics query expression for counter type metric
       --set-gauge-expr=":METRIC:"  
                         Set custom meterics query expression for gauge type metric
+      --set-summary-expr=":METRIC:"  
+                        Set custom meterics query expression for summary type metric    
       --set-delimiter=":METRIC:"  
                         Set custom meterics delimiter used to insert metric name into expression, only used if a custom expression is set
       --set-counter-legend="Job:[{{job}}]"  

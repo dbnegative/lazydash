@@ -1,0 +1,17 @@
+---
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    command: ["--web.enable-lifecycle", "--config.file", "/etc/prometheus/prometheus.yml"]
+    ports:
+      - 9090:9090
+    volumes:
+      - "./prometheus.yaml:/etc/prometheus/prometheus.yml"
+    links:
+      - grafana
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
