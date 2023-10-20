@@ -54,6 +54,7 @@ func main() {
 	app.Flag("set-counter-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.CounterLegend)
 	app.Flag("set-gauge-legend", "Set the default counter panel legend format").Default("Job:[{{job}}]").StringVar(&cfg.GaugeLegend)
 	app.Flag("grafana-url", "Set the grafana api url e.g http://grafana.example.com:3000").Short('H').Default("").StringVar(&cfg.GrafanaHost)
+	app.Flag("insecure", "Skip ssl certificate verification").Short('I').Default("false").BoolVar(&cfg.InsecureSkipVerify)
 	app.Flag("token", "Set the grafana api token").Short('T').Default("").StringVar(&cfg.Token)
 
 	app.Version("0.3.0")
@@ -90,7 +91,7 @@ func main() {
 		if cfg.GrafanaHost == "" { //Print to StdOut
 			dashboard.DumpJSON(cfg.Pretty)
 		} else { // Post to grafana API
-			PostDashboard(cfg.GrafanaHost, cfg.Token, dashboard)
+			PostDashboard(cfg.GrafanaHost, cfg.InsecureSkipVerify, cfg.Token, dashboard)
 		}
 
 	} else {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -10,7 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-//FetchURL fetches a http URL
+// FetchURL fetches a http URL
 func FetchURL(url string) []byte {
 
 	if !IsURL(url) {
@@ -30,13 +31,16 @@ func FetchURL(url string) []byte {
 	return body
 }
 
-//IsURL checks if a URL is valid
+// IsURL checks if a URL is valid
 func IsURL(str string) bool {
 	u, err := url.Parse(str)
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
-func PostDashboard(host string, token string, dashboard *Dashboard) {
+func PostDashboard(host string, insecureskipverify bool, token string, dashboard *Dashboard) {
+	if insecureskipverify {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 
 	if !IsURL(host) {
 		app.Fatalf("Host URL is not valid: %s", host)
